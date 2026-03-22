@@ -617,47 +617,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     activityCard.querySelector(".share-copy").addEventListener("click", () => {
       const copyBtn = activityCard.querySelector(".share-copy");
-      navigator.clipboard.writeText(shareText + " " + shareUrl).then(() => {
-        copyBtn.textContent = "✓";
-        copyBtn.classList.add("share-copy-success");
+      const textToCopy = shareText + " " + shareUrl;
 
-        // Clear any existing reset timeout so only the latest click controls the reset
+      function resetCopyButton(stateClass, symbol) {
+        copyBtn.textContent = symbol;
+        copyBtn.classList.add(stateClass);
+
         if (copyBtn._resetTimeoutId) {
           clearTimeout(copyBtn._resetTimeoutId);
         }
 
         copyBtn._resetTimeoutId = setTimeout(() => {
           copyBtn.textContent = "🔗";
-          copyBtn.classList.remove("share-copy-success");
+          copyBtn.classList.remove("share-copy-success", "share-copy-fail");
           copyBtn._resetTimeoutId = null;
         }, 2000);
-      const textToCopy = shareText + " " + shareUrl;
-
-      // Helper to update the button based on success or failure
-      function showCopyResult(success) {
-        if (success) {
-          copyBtn.textContent = "✓";
-          copyBtn.classList.add("share-copy-success");
-          setTimeout(() => {
-            copyBtn.textContent = "🔗";
-            copyBtn.classList.remove("share-copy-success");
-          }, 2000);
-        } else {
-          copyBtn.textContent = "✗";
-          copyBtn.classList.add("share-copy-fail");
-          setTimeout(() => {
-            copyBtn.textContent = "🔗";
-            copyBtn.classList.remove("share-copy-fail");
-          }, 2000);
-        }
       }
 
-      // Fallback using a temporary textarea and execCommand('copy')
+      // Fallback for browsers/contexts without Clipboard API support
       function fallbackCopyText(text) {
         try {
           const textarea = document.createElement("textarea");
           textarea.value = text;
-          // Avoid scrolling to the bottom
           textarea.style.position = "fixed";
           textarea.style.top = "-1000px";
           textarea.style.left = "-1000px";
@@ -672,22 +653,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      // Try the modern clipboard API first, with checks and try/catch
-      try {
-        if (navigator.clipboard && window.isSecureContext) {
-          navigator.clipboard.writeText(textToCopy).then(() => {
-            showCopyResult(true);
-          }).catch(() => {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard
+          .writeText(textToCopy)
+          .then(() => {
+            resetCopyButton("share-copy-success", "✓");
+          })
+          .catch(() => {
             const fallbackSuccess = fallbackCopyText(textToCopy);
-            showCopyResult(fallbackSuccess);
+            resetCopyButton(fallbackSuccess ? "share-copy-success" : "share-copy-fail", fallbackSuccess ? "✓" : "✗");
           });
-        } else {
-          const fallbackSuccess = fallbackCopyText(textToCopy);
-          showCopyResult(fallbackSuccess);
-        }
-      } catch (e) {
+      } else {
         const fallbackSuccess = fallbackCopyText(textToCopy);
-        showCopyResult(fallbackSuccess);
+        resetCopyButton(fallbackSuccess ? "share-copy-success" : "share-copy-fail", fallbackSuccess ? "✓" : "✗");
       }
     });
 

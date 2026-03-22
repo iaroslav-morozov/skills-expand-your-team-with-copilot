@@ -41,6 +41,11 @@ html.dark-mode {
   --border: #333333;
   --border-light: #2a2a2a;
   --border-focus: #444444;
+  /* Adjust primary palette for better contrast on dark backgrounds */
+  --primary: #90caf9;
+  --primary-light: #e3f2fd;
+  --primary-dark: #42a5f5;
+  --primary-text: #0b1020;
   --success-light: #1b3a1c;
   --warning-light: #3a2e00;
   --error-light: #3a1010;

@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.documentElement.classList.toggle("dark-mode", enabled);
     darkModeToggle.textContent = enabled ? "☀️" : "🌙";
     darkModeToggle.setAttribute("aria-label", enabled ? "Switch to light mode" : "Switch to dark mode");
+    darkModeToggle.setAttribute("aria-pressed", enabled ? "true" : "false");
   }
 
   // Restore saved preference

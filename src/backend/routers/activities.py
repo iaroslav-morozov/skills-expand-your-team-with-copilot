@@ -13,6 +13,8 @@ router = APIRouter(
     tags=["activities"]
 )
 
+VALID_DIFFICULTY_VALUES = {"Beginner", "Intermediate", "Advanced", "all-levels"}
+
 @router.get("", response_model=Dict[str, Any])
 @router.get("/", response_model=Dict[str, Any])
 def get_activities(
@@ -29,6 +31,13 @@ def get_activities(
     - end_time: Filter activities ending at or before this time (24-hour format, e.g., '17:00')
     - difficulty: Filter activities by difficulty level ('Beginner', 'Intermediate', 'Advanced', or 'all-levels' for activities with no difficulty set)
     """
+    # Validate difficulty parameter
+    if difficulty and difficulty not in VALID_DIFFICULTY_VALUES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid difficulty value '{difficulty}'. Must be one of: Beginner, Intermediate, Advanced, all-levels"
+        )
+
     # Build the query based on provided filters
     query = {}
     

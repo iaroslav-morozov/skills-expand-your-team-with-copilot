@@ -569,6 +569,14 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         }
       </div>
+      <div class="share-section">
+        <span class="share-label">Share:</span>
+        <div class="share-buttons">
+          <button class="share-btn share-twitter" title="Share on X (Twitter)">𝕏</button>
+          <button class="share-btn share-whatsapp" title="Share on WhatsApp">💬</button>
+          <button class="share-btn share-copy" title="Copy link">🔗</button>
+        </div>
+      </div>
     `;
 
     // Add click handlers for delete buttons
@@ -586,6 +594,43 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Add click handlers for social sharing buttons
+    const shareText = `Check out "${name}" at Mergington High School! ${details.description} Schedule: ${formattedSchedule}`;
+    const shareUrl = window.location.href;
+
+    activityCard.querySelector(".share-twitter").addEventListener("click", () => {
+      window.open(
+        `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText + " " + shareUrl)}`,
+        "_blank"
+      );
+    });
+
+    activityCard.querySelector(".share-whatsapp").addEventListener("click", () => {
+      window.open(
+        `https://wa.me/?text=${encodeURIComponent(shareText + " " + shareUrl)}`,
+        "_blank"
+      );
+    });
+
+    activityCard.querySelector(".share-copy").addEventListener("click", () => {
+      const copyBtn = activityCard.querySelector(".share-copy");
+      navigator.clipboard.writeText(shareText + " " + shareUrl).then(() => {
+        copyBtn.textContent = "✓";
+        copyBtn.classList.add("share-copy-success");
+        setTimeout(() => {
+          copyBtn.textContent = "🔗";
+          copyBtn.classList.remove("share-copy-success");
+        }, 2000);
+      }).catch(() => {
+        copyBtn.textContent = "✗";
+        copyBtn.classList.add("share-copy-fail");
+        setTimeout(() => {
+          copyBtn.textContent = "🔗";
+          copyBtn.classList.remove("share-copy-fail");
+        }, 2000);
+      });
+    });
 
     activitiesList.appendChild(activityCard);
   }

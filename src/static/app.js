@@ -569,6 +569,14 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         }
       </div>
+      <div class="share-section">
+        <span class="share-label">Share:</span>
+        <div class="share-buttons">
+          <button class="share-btn share-twitter" type="button" title="Share on X (Twitter)" aria-label="Share on X (Twitter)">𝕏</button>
+          <button class="share-btn share-whatsapp" type="button" title="Share on WhatsApp" aria-label="Share on WhatsApp">💬</button>
+          <button class="share-btn share-copy" type="button" title="Copy link" aria-label="Copy activity link">🔗</button>
+        </div>
+      </div>
     `;
 
     // Add click handlers for delete buttons
@@ -586,6 +594,102 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Add click handlers for social sharing buttons
+    const shareText = `Check out "${name}" at Mergington High School! ${details.description} Schedule: ${formattedSchedule}`;
+    const shareUrl = window.location.href;
+
+    activityCard.querySelector(".share-twitter").addEventListener("click", () => {
+      window.open(
+        `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText + " " + shareUrl)}`,
+        "_blank",
+        "noopener,noreferrer"
+      );
+    });
+
+    activityCard.querySelector(".share-whatsapp").addEventListener("click", () => {
+      window.open(
+        `https://wa.me/?text=${encodeURIComponent(shareText + " " + shareUrl)}`,
+        "_blank",
+        "noopener,noreferrer"
+      );
+    });
+
+    activityCard.querySelector(".share-copy").addEventListener("click", () => {
+      const copyBtn = activityCard.querySelector(".share-copy");
+      navigator.clipboard.writeText(shareText + " " + shareUrl).then(() => {
+        copyBtn.textContent = "✓";
+        copyBtn.classList.add("share-copy-success");
+
+        // Clear any existing reset timeout so only the latest click controls the reset
+        if (copyBtn._resetTimeoutId) {
+          clearTimeout(copyBtn._resetTimeoutId);
+        }
+
+        copyBtn._resetTimeoutId = setTimeout(() => {
+          copyBtn.textContent = "🔗";
+          copyBtn.classList.remove("share-copy-success");
+          copyBtn._resetTimeoutId = null;
+        }, 2000);
+      const textToCopy = shareText + " " + shareUrl;
+
+      // Helper to update the button based on success or failure
+      function showCopyResult(success) {
+        if (success) {
+          copyBtn.textContent = "✓";
+          copyBtn.classList.add("share-copy-success");
+          setTimeout(() => {
+            copyBtn.textContent = "🔗";
+            copyBtn.classList.remove("share-copy-success");
+          }, 2000);
+        } else {
+          copyBtn.textContent = "✗";
+          copyBtn.classList.add("share-copy-fail");
+          setTimeout(() => {
+            copyBtn.textContent = "🔗";
+            copyBtn.classList.remove("share-copy-fail");
+          }, 2000);
+        }
+      }
+
+      // Fallback using a temporary textarea and execCommand('copy')
+      function fallbackCopyText(text) {
+        try {
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          // Avoid scrolling to the bottom
+          textarea.style.position = "fixed";
+          textarea.style.top = "-1000px";
+          textarea.style.left = "-1000px";
+          document.body.appendChild(textarea);
+          textarea.focus();
+          textarea.select();
+          const successful = document.execCommand && document.execCommand("copy");
+          document.body.removeChild(textarea);
+          return !!successful;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      // Try the modern clipboard API first, with checks and try/catch
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(textToCopy).then(() => {
+            showCopyResult(true);
+          }).catch(() => {
+            const fallbackSuccess = fallbackCopyText(textToCopy);
+            showCopyResult(fallbackSuccess);
+          });
+        } else {
+          const fallbackSuccess = fallbackCopyText(textToCopy);
+          showCopyResult(fallbackSuccess);
+        }
+      } catch (e) {
+        const fallbackSuccess = fallbackCopyText(textToCopy);
+        showCopyResult(fallbackSuccess);
+      }
+    });
 
     activitiesList.appendChild(activityCard);
   }

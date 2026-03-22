@@ -707,6 +707,11 @@ footer {
   transform: scale(1.1);
 }
 
+.share-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--border-focus);
+}
 .share-copy-success {
   background-color: var(--success, #4caf50) !important;
   color: white;

@@ -33,7 +33,7 @@
 }
 
 /* Dark mode overrides */
-body.dark-mode {
+html.dark-mode {
   --background: #121212;
   --surface: #1e1e1e;
   --text-primary: #e0e0e0;
@@ -764,14 +764,14 @@ footer {
 }
 
 /* Dark mode search input */
-body.dark-mode .search-box input {
+html.dark-mode .search-box input {
   background-color: var(--surface);
   color: var(--text-primary);
   border-color: var(--border);
 }
 
 /* Dark mode modal inputs */
-body.dark-mode .modal-content input {
+html.dark-mode .modal-content input {
   background-color: var(--surface);
   color: var(--text-primary);
   border-color: var(--border);

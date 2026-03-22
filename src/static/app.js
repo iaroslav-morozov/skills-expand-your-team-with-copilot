@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const darkModeToggle = document.getElementById("dark-mode-toggle");
 
   function applyDarkMode(enabled) {
-    document.body.classList.toggle("dark-mode", enabled);
+    document.documentElement.classList.toggle("dark-mode", enabled);
     darkModeToggle.textContent = enabled ? "☀️" : "🌙";
     darkModeToggle.setAttribute("aria-label", enabled ? "Switch to light mode" : "Switch to dark mode");
   }
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
   applyDarkMode(localStorage.getItem("darkMode") === "true");
 
   darkModeToggle.addEventListener("click", () => {
-    const isDark = document.body.classList.contains("dark-mode");
+    const isDark = document.documentElement.classList.contains("dark-mode");
     localStorage.setItem("darkMode", String(!isDark));
     applyDarkMode(!isDark);
   });
